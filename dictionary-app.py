@@ -97,6 +97,8 @@ if auth_status:
             'termo': [term_name.lower()],
             'significado' :  [term_mean]}
         ) 
+        if term_name.lower() in list(data['termo']):
+          data = data[data['termo'] != term_name.lower()]
         new_df = data.append(term_df,ignore_index=True).sort_values(by='termo')
         update_the_spreadsheet('Dictionary',new_df)
 
