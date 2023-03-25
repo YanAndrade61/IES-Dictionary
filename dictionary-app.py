@@ -18,12 +18,8 @@ credentials = service_account.Credentials.from_service_account_info(
                 st.secrets.gcp_service_account, scopes = scope)
 
 client = Client(scope=scope,creds=credentials)
-print(client)
 spreadsheetname = "IES-Dictionary"
 spread = Spread(spreadsheetname,client = client)
-
-# Check the connection
-st.write(spread.url)
 
 sh = client.open(spreadsheetname)
 worksheet_list = sh.worksheets()
@@ -106,5 +102,5 @@ if auth_status:
 
 # Display selected terms
 st.subheader('Significado dos termos selecionados')
-for term, mean in df[df['termo'].isin(select_terms)].values:
+for term, mean in data[data['termo'].isin(select_terms)].values:
     st.write(f"* **{term.upper()}**: {mean}")
