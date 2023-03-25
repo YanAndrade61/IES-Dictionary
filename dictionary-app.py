@@ -83,7 +83,7 @@ data = load_the_spreadsheet('Dictionary')
 
 # Search for terms in data
 stbar.subheader('Pesquisar termos')
-sorted_terms = sorted(data.keys())
+sorted_terms = sorted(list(data['termo']))
 select_terms = stbar.multiselect('Termos',sorted_terms, sorted_terms)
 # stbar.write('---')
 
