@@ -1,5 +1,30 @@
 import streamlit as st
+import streamlit_authenticator as stauth
 import yaml
+
+
+#----Authentication User------#
+with open('credential.yaml','r') as fp:
+    config = yaml.safe_load(fp)
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['preauthorized']
+)
+name, auth_status, username = authenticator.login('Login','sidebar')
+
+if auth_status:
+    authenticator.logout('Logout', 'sidebar')
+    st.sidebar.write(f'Welcome *{name}*')
+elif auth_status == False:
+    st.sidebar.error('Username/password is incorrect')
+
+st.sidebar.write('---')
+
+#------------APP--------------#
 
 # Layout sidebar + main page
 st.header('Dicionario engenharia de software :book:')
@@ -21,16 +46,17 @@ if data == None: data ={}
 stbar.subheader('Pesquisar termos')
 sorted_terms = sorted(data.keys())
 select_terms = stbar.multiselect('Termos',sorted_terms, sorted_terms)
-stbar.write('---')
+# stbar.write('---')
 
-# Insert a new term
-stbar.subheader('Inserir termo')
-term_name = stbar.text_input('Nome')
-term_mean = stbar.text_area('Significado')
-if stbar.button('Inserir'):
-    data[term_name.lower()] = term_mean
-    with open('dictionary.yaml','w') as fp:
-        yaml.dump(data,fp)
+# Insert a new term only for registered user
+if auth_status:
+    stbar.subheader('Inserir termo')
+    term_name = stbar.text_input('Nome')
+    term_mean = stbar.text_area('Significado')
+    if stbar.button('Inserir'):
+        data[term_name.lower()] = term_mean
+        with open('dictionary.yaml','w') as fp:
+            yaml.dump(data,fp)
 
 # Display selected terms
 st.subheader('Significado dos termos selecionados')
