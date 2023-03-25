@@ -1,19 +1,60 @@
 import streamlit as st
 import streamlit_authenticator as stauth
-import yaml
-import os
+import pandas as pd
+from gspread_pandas import Spread,Client
+from google.oauth2 import service_account
+import ssl
 
+#-----Connection to google sheet------#
 
-#----Authentication User------#
-with open('credential.yaml','r') as fp:
-    config = yaml.safe_load(fp)
+# Disable certificate verification (Not necessary always)
+ssl._create_default_https_context = ssl._create_unverified_context
 
+# Create a Google Authentication connection object
+scope = ['https://spreadsheets.google.com/feeds',
+         'https://www.googleapis.com/auth/drive']
+
+credentials = service_account.Credentials.from_service_account_info(
+                st.secrets.gcp_service_account, scopes = scope)
+
+client = Client(scope=scope,creds=credentials)
+print(client)
+spreadsheetname = "IES-Dictionary"
+spread = Spread(spreadsheetname,client = client)
+
+# Check the connection
+st.write(spread.url)
+
+sh = client.open(spreadsheetname)
+worksheet_list = sh.worksheets()
+
+# Functions 
+@st.cache_data()
+# Get our worksheet names
+def worksheet_names():
+    sheet_names = []   
+    for sheet in worksheet_list:
+        sheet_names.append(sheet.title)  
+    return sheet_names
+
+# Get the sheet as dataframe
+def load_the_spreadsheet(spreadsheetname):
+    worksheet = sh.worksheet(spreadsheetname)
+    df = pd.DataFrame(worksheet.get_all_records())
+    return df
+
+# Update to Sheet
+def update_the_spreadsheet(spreadsheetname,dataframe):
+    col = ['termo','significado']
+    spread.df_to_sheet(dataframe[col],sheet = spreadsheetname,index = False)
+
+#------Authentication User------#
 authenticator = stauth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days'],
-    config['preauthorized']
+    st.secrets.config.credentials,
+    st.secrets.config.cookie.name,
+    st.secrets.config.cookie.key,
+    st.secrets.config.cookie.expiry_days,
+    st.secrets.config.preauthorized
 )
 name, auth_status, username = authenticator.login('Login','sidebar')
 
@@ -39,9 +80,7 @@ stbar = st.sidebar
 stbar.header('Ferramentas do dicionário')
 
 # Load dictionary data
-with open('dictionary.yaml','r') as fp:
-    data = yaml.safe_load(fp)
-if data == None: data ={}
+data = load_the_spreadsheet('Dictionary')
 
 # Search for terms in data
 stbar.subheader('Pesquisar termos')
@@ -55,10 +94,12 @@ if auth_status:
     term_name = stbar.text_input('Nome')
     term_mean = stbar.text_area('Significado')
     if stbar.button('Inserir'):
-        data[term_name.lower()] = term_mean
-        with open('dictionary.yaml','w') as fp:
-            yaml.dump(data,fp)
-        os.system('git commit -a "Update terms" | git push')
+        term_df = pd.DataFrame({
+            'termo': [term_name],
+            'significado' :  [term_mean]}
+        ) 
+        new_df = data.append(term_df,ignore_index=True)
+        update_the_spreadsheet('Dictionary',new_df)
 
 # Display selected terms
 st.subheader('Significado dos termos selecionados')
