@@ -106,5 +106,5 @@ if auth_status:
 
 # Display selected terms
 st.subheader('Significado dos termos selecionados')
-for term in select_terms:
-    st.write(f"* **{term.upper()}**: {data[term]}")
+for term, mean in df[df['termo'].isin(select_terms)].values:
+    st.write(f"* **{term.upper()}**: {mean}")
