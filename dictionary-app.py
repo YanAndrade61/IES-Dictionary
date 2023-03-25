@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
+import os
 
 
 #----Authentication User------#
@@ -57,6 +58,7 @@ if auth_status:
         data[term_name.lower()] = term_mean
         with open('dictionary.yaml','w') as fp:
             yaml.dump(data,fp)
+        os.system('git commit -a "Update terms" | git push')
 
 # Display selected terms
 st.subheader('Significado dos termos selecionados')
