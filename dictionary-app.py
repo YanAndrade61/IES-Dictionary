@@ -49,8 +49,11 @@ def update_the_spreadsheet(spreadsheetname,dataframe):
     spread.df_to_sheet(dataframe[col],sheet = spreadsheetname,index = False)
 
 #------Authentication User------#
+credentials = {
+    "usernames": st.secrets.config.credentials.usernames
+}
 authenticator = stauth.Authenticate(
-    st.secrets.config.credentials,
+    credentials,
     st.secrets.config.cookie.name,
     st.secrets.config.cookie.key,
     st.secrets.config.cookie.expiry_days,
