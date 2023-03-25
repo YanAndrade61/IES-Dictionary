@@ -94,10 +94,10 @@ if auth_status:
     term_mean = stbar.text_area('Significado')
     if stbar.button('Inserir'):
         term_df = pd.DataFrame({
-            'termo': [term_name],
+            'termo': [term_name.lower()],
             'significado' :  [term_mean]}
         ) 
-        new_df = data.append(term_df,ignore_index=True)
+        new_df = data.append(term_df,ignore_index=True).sort_values(by='termo')
         update_the_spreadsheet('Dictionary',new_df)
 
 # Display selected terms
