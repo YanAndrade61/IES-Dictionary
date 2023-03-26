@@ -18,10 +18,9 @@ def run_app():
 
     name, auth_stats = authenticate_user(
         credentials,
-        st.secrets.config.cookie.name,
-        st.secrets.config.cookie.key,
-        st.secrets.config.cookie.expiry_days,
+        st.secrets.config.cookie,
         st.secrets.config.preauthorized,
+        'sidebar'
     )
     if auth_stats:
         stbar.write(f"Welcome *{name}*")
