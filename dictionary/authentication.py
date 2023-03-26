@@ -26,3 +26,5 @@ def authenticate_user(credential: dict, cookie: dict, preauthorized: dict, pos: 
         return name, True
     elif auth_status == False:
         return None, False
+
+    return None, None
