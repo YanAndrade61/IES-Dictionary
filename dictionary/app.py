@@ -54,12 +54,12 @@ if auth_stats:
             {"termo": [term_name.lower()], "significado": [term_mean]}
         )
         if term_name.lower() in data_dict.keys():
-            data = data_df[data_df["termo"] != term_name.lower()]
+            data_df = data_df[data_df["termo"] != term_name.lower()]
 
-        data = data.append(term_df, ignore_index=True).sort_values(by="termo")
-        spread.df_to_sheet(data, sheet=spreadsheet["page"], index=False)
+        data_df = data_df.append(term_df, ignore_index=True).sort_values(by="termo")
+        spread.df_to_sheet(data_df, sheet=spreadsheet["page"], index=False)
 
 # Display selected terms
 st.subheader("Significado dos termos selecionados")
 for term in select_terms:
-    st.write(f"* **{term.upper()}**: {data_dict[term]}")
+    st.write(f"* **{term.upper()}**: {data_dict[term]["significado"]}")
