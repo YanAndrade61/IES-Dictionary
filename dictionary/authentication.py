@@ -24,7 +24,7 @@ def authenticate_user(credential: dict, cookie: dict, preauthorized: dict, pos: 
     if auth_status:
         authenticator.logout("Logout", pos)
         return name, True
-    elif auth_status == False:
+    elif auth_status is False:
         return None, False
 
     return None, None
