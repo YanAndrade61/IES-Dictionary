@@ -41,15 +41,14 @@ st.write(
 )
 st.write("---")
 
-stbar.header("Ferramentas do dicionário")
-
 # Search for terms in data
-stbar.subheader("Pesquisar termos")
+st.subheader("Pesquisar termos")
 sorted_terms = sorted(list(data["termo"]))
-select_terms = stbar.multiselect("Termos", sorted_terms, sorted_terms)
+select_terms = st.multiselect("Termos", sorted_terms, sorted_terms)
 
 # Insert a new term only for registered user
 if auth_stats:
+    stbar.header("Ferramentas do usuário")
     stbar.subheader("Inserir termo")
     term_name = stbar.text_input("Nome")
     term_mean = stbar.text_area("Significado")
