@@ -10,7 +10,8 @@ spreadsheet = {"name": "IES-Dictionary", "page": "Dictionary"}
 
 client = get_google_client(gcp_account=st.secrets.gcp_service_account)
 spread = get_spreadsheet(spreadsheetname=spreadsheet["name"], client=client)
-data = spread.sheet_to_df(index=0, sheet=spreadsheet["page"])
+data_df = spread.sheet_to_df(index=0, sheet=spreadsheet["page"])
+data_dict = data_df.set_index("termo").to_dict("index")
 
 # ------Authentication User------#
 credentials = {"usernames": st.secrets.config.credentials.usernames}
@@ -39,7 +40,7 @@ st.write(
 st.write("---")
 
 # Search for terms in data
-sorted_terms = sorted(list(data["termo"]))
+sorted_terms = sorted(list(data_dict.keys()))
 select_terms = st.multiselect("Termos", sorted_terms, sorted_terms)
 
 # Insert a new term only for registered user
@@ -52,13 +53,13 @@ if auth_stats:
         term_df = pd.DataFrame(
             {"termo": [term_name.lower()], "significado": [term_mean]}
         )
-        if term_name.lower() in list(data["termo"]):
-            data = data[data["termo"] != term_name.lower()]
+        if term_name.lower() in data_dict.keys():
+            data = data_df[data_df["termo"] != term_name.lower()]
 
         data = data.append(term_df, ignore_index=True).sort_values(by="termo")
         spread.df_to_sheet(data, sheet=spreadsheet["page"], index=False)
 
 # Display selected terms
 st.subheader("Significado dos termos selecionados")
-for term, mean in data[data["termo"].isin(select_terms)].values:
-    st.write(f"* **{term.upper()}**: {mean}")
+for term in select_terms:
+    st.write(f"* **{term.upper()}**: {data_dict[term]}")
