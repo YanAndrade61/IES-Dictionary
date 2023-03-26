@@ -1,7 +1,6 @@
 import ssl
 from gspread_pandas import Spread, Client
 from google.oauth2 import service_account
-from pandas import Dataframe
 
 
 def get_google_client(gcp_account: dict):
