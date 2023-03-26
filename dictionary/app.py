@@ -10,7 +10,6 @@ spreadsheet = {"name": "IES-Dictionary", "page": "Dictionary"}
 
 client = get_google_client(gcp_account=st.secrets.gcp_service_account)
 spread = get_spreadsheet(spreadsheetname=spreadsheet["name"], client=client)
-init -= 1
 data = spread.sheet_to_df(index=0, sheet=spreadsheet["page"])
 
 # ------Authentication User------#
