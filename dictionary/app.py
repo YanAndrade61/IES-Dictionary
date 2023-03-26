@@ -62,4 +62,4 @@ if auth_stats:
 # Display selected terms
 st.subheader("Significado dos termos selecionados")
 for term in select_terms:
-    st.write(f"* **{term.upper()}**: {data_dict[term]["significado"]}")
+    st.write(f"* **{term.upper()}**: {data_dict[term]['significado']}")
