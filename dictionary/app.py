@@ -8,11 +8,9 @@ stbar = st.sidebar
 # -----Connection to google sheet------#
 spreadsheet = {"name": "IES-Dictionary", "page": "Dictionary"}
 
-init = 1
-if init:
-    client = get_google_client(gcp_account=st.secrets.gcp_service_account)
-    spread = get_spreadsheet(spreadsheetname=spreadsheet["name"], client=client)
-    init -= 1
+client = get_google_client(gcp_account=st.secrets.gcp_service_account)
+spread = get_spreadsheet(spreadsheetname=spreadsheet["name"], client=client)
+init -= 1
 data = spread.sheet_to_df(index=0, sheet=spreadsheet["page"])
 
 # ------Authentication User------#
@@ -42,7 +40,6 @@ st.write(
 st.write("---")
 
 # Search for terms in data
-st.subheader("Pesquisar termos")
 sorted_terms = sorted(list(data["termo"]))
 select_terms = st.multiselect("Termos", sorted_terms, sorted_terms)
 
