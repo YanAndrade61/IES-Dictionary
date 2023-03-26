@@ -68,5 +68,4 @@ def run_app():
         st.write(f"* **{term.upper()}**: {mean}")
 
 
-if __name__ == "__MAIN__":
-    run_app()
+run_app()
