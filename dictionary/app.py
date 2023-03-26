@@ -7,10 +7,12 @@ import pandas as pd
 stbar = st.sidebar
 # -----Connection to google sheet------#
 spreadsheet = {"name": "IES-Dictionary", "page": "Dictionary"}
-
-client = get_google_client(gcp_account=st.secrets.gcp_service_account)
-spread = get_spreadsheet(spreadsheetname=spreadsheet["name"], client=client)
-data_df = spread.sheet_to_df(index=0, sheet=spreadsheet["page"])
+init = 1
+if init:
+    client = get_google_client(gcp_account=st.secrets.gcp_service_account)
+    spread = get_spreadsheet(spreadsheetname=spreadsheet["name"], client=client)
+    data_df = spread.sheet_to_df(index=0, sheet=spreadsheet["page"])
+    init -= 1
 data_dict = data_df.set_index("termo").to_dict("index")
 
 # ------Authentication User------#
